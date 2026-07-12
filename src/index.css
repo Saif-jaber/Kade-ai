@@ -1,0 +1,263 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply font-sans;
+    background-color: #F7F5F0;
+    color: #2D3436;
+    font-feature-settings: 'cv11', 'ss01';
+    caret-color: transparent;
+  }
+
+  .dark body,
+  .dark {
+    @apply bg-brand-900 text-white;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #D5D0C8 transparent;
+  }
+
+  .dark .scrollbar-thin {
+    scrollbar-color: rgba(118, 171, 174, 0.2) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #D5D0C8;
+    border-radius: 9999px;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-brand-700/60 rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: #B8B2A8;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-brand-600/70;
+  }
+
+  /* Light mode markdown content styles */
+  .message-content p {
+    @apply mb-3 last:mb-0;
+  }
+
+  .message-content ul,
+  .message-content ol {
+    @apply mb-3 pl-5 sm:pl-6;
+  }
+
+  .message-content ul {
+    @apply list-disc;
+  }
+
+  .message-content ol {
+    @apply list-decimal;
+  }
+
+  .message-content li {
+    @apply mb-1;
+  }
+
+  .message-content li > p {
+    @apply mb-0;
+  }
+
+  .message-content blockquote {
+    border-left-color: #A89F91;
+    @apply border-l-[3px] pl-4 italic mb-3;
+    color: #6B7280;
+  }
+
+  .message-content table {
+    @apply w-full mb-3 border-collapse text-sm;
+  }
+
+  .message-content th,
+  .message-content td {
+    @apply px-3 py-2 text-left;
+    border-color: #E5E1DA;
+  }
+
+  .message-content th {
+    background-color: #EDEAE4;
+    @apply font-semibold;
+    color: #374151;
+  }
+
+  .message-content td {
+    color: #4B5563;
+  }
+
+  .message-content h1 {
+    @apply text-xl sm:text-2xl font-bold mb-3 mt-5 tracking-tight;
+    color: #1F2937;
+  }
+
+  .message-content h2 {
+    @apply text-lg sm:text-xl font-semibold mb-2 mt-4 tracking-tight;
+    color: #1F2937;
+  }
+
+  .message-content h3 {
+    @apply text-base sm:text-lg font-semibold mb-2 mt-3;
+    color: #1F2937;
+  }
+
+  .message-content a {
+    color: #0D9488;
+    text-decoration-color: rgba(13, 148, 136, 0.3);
+    text-underline-offset: 2px;
+    @apply underline transition-colors duration-150;
+  }
+
+  .message-content a:hover {
+    text-decoration-color: #0D9488;
+  }
+
+  .message-content strong {
+    @apply font-semibold;
+    color: #1F2937;
+  }
+
+  .message-content code:not(pre code) {
+    background-color: #EDEAE4;
+    color: #374151;
+    @apply px-1.5 py-0.5 rounded-md text-[13px] font-mono;
+  }
+
+  .message-content pre {
+    @apply mb-4 rounded-xl overflow-hidden;
+  }
+
+  .message-content hr {
+    border-color: #E5E1DA;
+    @apply my-6;
+  }
+
+  /* Dark mode markdown content styles */
+  .dark .message-content blockquote {
+    @apply border-brand-500/40 text-brand-300;
+  }
+
+  .dark .message-content th,
+  .dark .message-content td {
+    @apply border-brand-700/50;
+  }
+
+  .dark .message-content th {
+    @apply bg-brand-800/50 text-brand-200;
+  }
+
+  .dark .message-content td {
+    @apply text-brand-200;
+  }
+
+  .dark .message-content h1,
+  .dark .message-content h2,
+  .dark .message-content h3 {
+    @apply text-white;
+  }
+
+  .dark .message-content a {
+    @apply text-brand-400 decoration-brand-500/40;
+  }
+
+  .dark .message-content a:hover {
+    @apply decoration-brand-400;
+  }
+
+  .dark .message-content strong {
+    @apply text-white;
+  }
+
+  .dark .message-content code:not(pre code) {
+    @apply bg-brand-800/60 text-brand-200;
+  }
+
+  .dark .message-content hr {
+    @apply border-brand-700/50;
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .thinking-gradient {
+    background: linear-gradient(
+      135deg,
+      rgba(13, 148, 136, 0.06) 0%,
+      rgba(13, 148, 136, 0.02) 100%
+    );
+  }
+
+  .dark .thinking-gradient {
+    background: linear-gradient(
+      135deg,
+      rgba(118, 171, 174, 0.1) 0%,
+      rgba(118, 171, 174, 0.04) 100%
+    );
+  }
+
+  /* Remove blue line highlighting in syntax highlighter */
+  .message-content pre[class*="language-"],
+  .message-content code[class*="language-"],
+  .message-content pre {
+    background: transparent !important;
+  }
+
+  .message-content .linenumber,
+  .message-content [class*="line-number"] {
+    background: transparent !important;
+  }
+
+  .message-content tr:hover,
+  .message-content td:hover {
+    background: transparent !important;
+  }
+}
