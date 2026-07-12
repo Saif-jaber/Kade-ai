@@ -1,21 +1,63 @@
-# Kade AI Chat
+# Kade AI
 
-A frontend-only React application for an AI chatbot UI, styled and behaving like Claude.ai / Manus. This is the client layer only — no backend, no database.
+A modern AI chat interface powered by a local Ollama instance. Features real-time streaming, web search integration, and a clean minimal UI.
 
-## Quick Start
+## Demo
+
+![Chat Interface](https://via.placeholder.com/800x400)
+
+## Features
+
+- **Real AI Responses** - Connected to Ollama running locally with qwen3-coder:30b
+- **Web Search** - Automatically searches the web when you ask about current events, news, prices, or schedules
+- **Streaming Responses** - Watch the AI type in real-time
+- **Thinking Steps** - Visual progress indicators showing the AI's processing flow
+- **Conversation Memory** - Full context awareness across your chat history
+- **Dark/Light Mode** - Toggle between themes
+- **Markdown Support** - Renders code blocks, tables, lists, and more
+- **Responsive Design** - Works on mobile, tablet, and desktop
+- **Settings Page** - Profile, appearance, and notification preferences
+- **Stop Generation** - Cancel mid-response while keeping what was generated
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [Ollama](https://ollama.com/) installed and running locally
+
+## Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/Saif-jaber/Kade-ai.git
+cd Kade-ai
+```
+
+2. Install dependencies
 
 ```bash
 npm install
+```
+
+3. Pull the required model in Ollama
+
+```bash
+ollama pull qwen3-coder:30b
+```
+
+4. Start Ollama (if not already running)
+
+```bash
+ollama serve
+```
+
+5. Start the development server
+
+```bash
 npm run dev
 ```
 
-## Tech Stack
-
-- **React 19** with Vite
-- **Tailwind CSS 3** for styling
-- **lucide-react** for icons
-- **react-markdown** + **remark-gfm** for Markdown rendering
-- **react-syntax-highlighter** for code blocks
+6. Open your browser and go to `http://localhost:5173`
 
 ## Project Structure
 
@@ -23,100 +65,64 @@ npm run dev
 src/
 ├── components/
 │   ├── chat/
-│   │   ├── ChatArea.jsx          # Main chat container with scroll management
-│   │   ├── ChatInput.jsx         # Auto-expanding textarea with send/stop
-│   │   ├── ClarifyingQuestion.jsx # Interactive question card component
-│   │   ├── CodeBlock.jsx         # Syntax-highlighted code with copy button
-│   │   ├── EmptyState.jsx        # Welcome screen with example prompts
-│   │   ├── MessageBubble.jsx     # Individual message with markdown rendering
-│   │   ├── MessageList.jsx       # Message list container
-│   │   └── ThinkingPanel.jsx     # Collapsible reasoning steps display
+│   │   ├── ChatArea.jsx
+│   │   ├── ChatInput.jsx
+│   │   ├── ClarifyingQuestion.jsx
+│   │   ├── CodeBlock.jsx
+│   │   ├── EmptyState.jsx
+│   │   ├── MessageActions.jsx
+│   │   ├── MessageBubble.jsx
+│   │   ├── MessageList.jsx
+│   │   └── ThinkingPanel.jsx
 │   ├── common/
-│   │   ├── LoadingDots.jsx       # Animated loading indicator
-│   │   └── ThemeToggle.jsx       # Dark/light mode switch
+│   │   ├── LoadingDots.jsx
+│   │   └── ThemeToggle.jsx
 │   ├── layout/
-│   │   ├── AppLayout.jsx         # Root layout wrapper
-│   │   └── Header.jsx            # Top bar with sidebar toggle and theme
+│   │   ├── AppLayout.jsx
+│   │   └── Header.jsx
+│   ├── settings/
+│   │   └── Settings.jsx
 │   └── sidebar/
-│       └── Sidebar.jsx           # Conversation list with groups and CRUD
+│       └── Sidebar.jsx
 ├── context/
-│   ├── ChatContext.jsx           # Chat state management (conversations, streaming)
-│   └── ThemeContext.jsx          # Dark/light mode state
-├── constants/
-│   └── mockData.js               # Static mock data (conversations, prompts)
+│   ├── ChatContext.jsx
+│   └── ThemeContext.jsx
 ├── services/
-│   └── mockData.js               # Mock API functions with TODO markers
-├── utils/
-│   └── helpers.js                # Utility functions (ID generation, date formatting)
-├── App.jsx                       # Root component
-├── main.jsx                      # Entry point
-└── index.css                     # Global styles and Tailwind layers
+│   ├── ollama.js
+│   └── search.js
+├── workers/
+│   └── streamWorker.js
+├── App.jsx
+├── main.jsx
+└── index.css
 ```
 
-## Features
+## Tech Stack
 
-1. **Chat Interface** — Markdown rendering, syntax-highlighted code blocks, streaming text simulation, auto-scroll with user override
-2. **Thinking Panel** — Collapsible step-by-step reasoning display with animated indicators
-3. **Clarifying Questions** — Interactive card component for single/multi-select options
-4. **Sidebar** — Conversation list grouped by recency with rename, delete, and new chat
-5. **Dark/Light Mode** — Persistent theme toggle with system preference detection
-6. **Responsive** — Works on mobile (320px), tablet (768px), and desktop (1440px)
-7. **Empty State** — Welcome screen with example prompt suggestions
+- **React 19** with Vite
+- **Tailwind CSS 3** for styling
+- **Ollama** for local AI inference
+- **DuckDuckGo** for web search
+- **lucide-react** for icons
+- **react-markdown** for markdown rendering
 
-## Connecting to a Backend
+## How It Works
 
-All backend integration points are marked with `// TODO: connect to backend`. The key files:
+1. You type a message and hit send
+2. The app shows thinking steps as it processes
+3. If your message needs current information (detected automatically), it searches the web first
+4. Search results are passed to the AI along with your message
+5. The AI responds with a streaming output
+6. Full conversation history is maintained for context
 
-### `src/services/mockData.js`
+## Building for Production
 
-Contains mock API functions that simulate async behavior:
-
-| Function | Purpose | Replace with |
-|----------|---------|--------------|
-| `MOCK_ASSISTANT_REPLY(message)` | Generates a fake response | `fetch('/api/chat', ...)` |
-| `getConversations()` | Returns empty array | `fetch('/api/conversations')` |
-| `streamMessage(message, conversationId)` | Async generator yielding tokens | SSE/WebSocket stream |
-| `createConversation(title)` | Creates a mock conversation | `fetch('/api/conversations', { method: 'POST' })` |
-| `deleteConversation(id)` | Simulates deletion | `fetch('/api/conversations/${id}', { method: 'DELETE' })` |
-| `renameConversation(id, title)` | Simulates rename | `fetch('/api/conversations/${id}', { method: 'PATCH' })` |
-
-### `src/context/ChatContext.jsx`
-
-The `sendMessage` function handles the full lifecycle:
-1. Adds user message to state
-2. Shows thinking steps
-3. Streams the assistant response token-by-token
-4. Saves the final message
-
-To connect to a real backend, replace the mock streaming logic with `fetch()` using `ReadableStream` or an SSE endpoint.
-
-### Message Data Shape
-
-```javascript
-{
-  id: string,
-  role: 'user' | 'assistant',
-  content: string,
-  thinkingSteps?: [{ id: string, label: string, icon: string }],
-  timestamp: string // ISO 8601
-}
+```bash
+npm run build
 ```
 
-### Conversation Data Shape
+The output will be in the `dist/` folder.
 
-```javascript
-{
-  id: string,
-  title: string,
-  messages: Message[],
-  createdAt: string,
-  updatedAt: string
-}
-```
+## License
 
-## Extending
-
-- **Add new message types**: Extend `MessageBubble.jsx` to handle different `role` values or message metadata
-- **Real streaming**: Use `fetch` with `response.body.getReader()` to consume a `ReadableStream`
-- **Persistence**: Replace React state in `ChatContext` with API calls and local storage fallback
-- **Auth**: Add an `AuthContext` and wrap API calls with token headers
+MIT
