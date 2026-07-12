@@ -1,5 +1,7 @@
 # Kade AI
 
+> **Note:** This project is still in active development. Features are being added and changed regularly. Some things may not work as expected yet.
+
 A modern AI chat interface powered by a local Ollama instance. Features real-time streaming, web search integration, and a clean minimal UI.
 
 ## Demo
