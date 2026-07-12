@@ -6,7 +6,7 @@ A modern AI chat interface powered by a local Ollama instance. Features real-tim
 
 ## Demo
 
-![Chat Interface](https://via.placeholder.com/800x400)
+![Chat Interface](demo.png)
 
 ## Features
 
