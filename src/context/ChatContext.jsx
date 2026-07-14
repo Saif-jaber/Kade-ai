@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useCallback, useRef } from 'react'
 import { v4Helper } from '../utils/helpers.js'
 import { MOCK_CONVERSATIONS } from '../constants/mockData.js'
-import { streamChat } from '../services/ollama.js'
-import { searchWeb, needsSearch } from '../services/search.js'
+import { streamChat, routeQuery } from '../services/ollama.js'
+import { searchWeb } from '../services/search.js'
 
 const ChatContext = createContext()
 
@@ -95,36 +95,37 @@ export function ChatProvider({ children }) {
     controllerRef.current = new AbortController()
     const signal = controllerRef.current.signal
 
-    const shouldSearch = needsSearch(content)
     const steps = []
 
     setIsThinking(true)
     setThinkingSteps([])
 
-    steps.push({ id: v4Helper(), label: 'Thinking', icon: 'search' })
+    steps.push({ id: v4Helper(), label: 'Routing query', icon: 'search' })
     setThinkingSteps(prev => [...prev, steps[0]])
-    await new Promise(resolve => setTimeout(resolve, 200))
 
-    steps.push({ id: v4Helper(), label: 'Processing', icon: 'cpu' })
-    setThinkingSteps(prev => [...prev, steps[1]])
+    const shouldSearch = await routeQuery(content)
+
+    steps[0].done = true
+    steps.push({ id: v4Helper(), label: shouldSearch ? 'Searching web' : 'Using knowledge', icon: 'cpu' })
+    setThinkingSteps(prev => [...prev.slice(0, 1), steps[0], steps[1]])
     await new Promise(resolve => setTimeout(resolve, 150))
 
     let searchContext = ''
 
     if (shouldSearch) {
-      steps.push({ id: v4Helper(), label: `Searching: "${content.slice(0, 40)}..."`, icon: 'search' })
-      setThinkingSteps(prev => [...prev, steps[2]])
+      const { results: searchResults, refinedQuery } = await searchWeb(content)
 
-      const searchResults = await searchWeb(content)
+      steps[1].label = `Searching: "${refinedQuery}"`
+      setThinkingSteps(prev => [...prev.slice(0, 2), steps[1]])
 
       if (searchResults.length > 0) {
-        searchContext = '\n\n[Search results:\n' +
-          searchResults.map(r => `- ${r.title}: ${r.snippet}`).join('\n') +
-          '\nUse these to answer the user accurately.]'
+        searchContext = '\n\n===== LIVE SEARCH RESULTS (use these to answer) =====\n' +
+          searchResults.map((r, i) => `[${i + 1}] ${r.title}\n    ${r.snippet}`).join('\n\n') +
+          '\n===== END SEARCH RESULTS ====='
       }
 
       steps.push({ id: v4Helper(), label: 'Processing results', icon: 'cpu' })
-      setThinkingSteps(prev => [...prev, steps[3]])
+      setThinkingSteps(prev => [...prev, steps[2]])
       await new Promise(resolve => setTimeout(resolve, 200))
     }
 
