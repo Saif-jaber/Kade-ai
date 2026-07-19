@@ -100,14 +100,27 @@ export function ChatProvider({ children }) {
     setIsThinking(true)
     setThinkingSteps([])
 
-    steps.push({ id: v4Helper(), label: 'Routing query', icon: 'search' })
-    setThinkingSteps(prev => [...prev, steps[0]])
+    steps.push({
+      id: v4Helper(),
+      type: 'thinking',
+      status: 'active',
+      title: 'Understanding request',
+    })
+    setThinkingSteps([...steps])
 
     const shouldSearch = await routeQuery(content)
 
-    steps[0].done = true
-    steps.push({ id: v4Helper(), label: shouldSearch ? 'Searching web' : 'Using knowledge', icon: 'cpu' })
-    setThinkingSteps(prev => [...prev.slice(0, 1), steps[0], steps[1]])
+    steps[0] = { ...steps[0], status: 'completed' }
+
+    steps.push({
+      id: v4Helper(),
+      type: 'search',
+      status: 'active',
+      title: shouldSearch ? 'Searching the web' : 'Using knowledge',
+      subtitle: '',
+      children: [],
+    })
+    setThinkingSteps([...steps])
     await new Promise(resolve => setTimeout(resolve, 150))
 
     let searchContext = ''
@@ -115,8 +128,16 @@ export function ChatProvider({ children }) {
     if (shouldSearch) {
       const { results: searchResults, refinedQuery } = await searchWeb(content)
 
-      steps[1].label = `Searching: "${refinedQuery}"`
-      setThinkingSteps(prev => [...prev.slice(0, 2), steps[1]])
+      steps[1] = {
+        ...steps[1],
+        title: 'Searching the web',
+        subtitle: refinedQuery,
+        children: [
+          { id: v4Helper(), title: `Querying "${refinedQuery}"`, status: 'completed' },
+          { id: v4Helper(), title: 'Reading results', status: 'active' },
+        ],
+      }
+      setThinkingSteps([...steps])
 
       if (searchResults.length > 0) {
         searchContext = '\n\n===== LIVE SEARCH RESULTS (use these to answer) =====\n' +
@@ -124,13 +145,37 @@ export function ChatProvider({ children }) {
           '\n===== END SEARCH RESULTS ====='
       }
 
-      steps.push({ id: v4Helper(), label: 'Processing results', icon: 'cpu' })
-      setThinkingSteps(prev => [...prev, steps[2]])
+      steps[1] = {
+        ...steps[1],
+        status: 'completed',
+        subtitle: refinedQuery,
+        children: [
+          { id: steps[1].children[0].id, title: `Querying "${refinedQuery}"`, status: 'completed' },
+          { id: steps[1].children[1].id, title: 'Reading results', status: 'completed' },
+        ],
+      }
+
+      steps.push({
+        id: v4Helper(),
+        type: 'thinking',
+        status: 'active',
+        title: 'Processing results',
+      })
+      setThinkingSteps([...steps])
       await new Promise(resolve => setTimeout(resolve, 200))
+
+      steps[steps.length - 1] = { ...steps[steps.length - 1], status: 'completed' }
     }
 
-    steps.push({ id: v4Helper(), label: 'Generating response', icon: 'file-text' })
-    setThinkingSteps(prev => [...prev, steps[steps.length - 1]])
+    steps.push({
+      id: v4Helper(),
+      type: 'sparkles',
+      status: 'active',
+      title: 'Writing response',
+    })
+    setThinkingSteps([...steps])
+
+    steps[steps.length - 1] = { ...steps[steps.length - 1], status: 'completed' }
 
     setIsThinking(false)
     setIsStreaming(true)
@@ -147,7 +192,7 @@ export function ChatProvider({ children }) {
       id: v4Helper(),
       role: 'assistant',
       content: '',
-      thinkingSteps: steps,
+      thinkingSteps: [...steps],
       timestamp: new Date().toISOString(),
     })
 
@@ -163,7 +208,7 @@ export function ChatProvider({ children }) {
       () => {
         if (!savedRef.current && accumulated) {
           savedRef.current = true
-          addAssistantMessage(convId, accumulated, steps)
+          addAssistantMessage(convId, accumulated, [...steps])
         }
         setIsStreaming(false)
         setStreamingMessage(null)

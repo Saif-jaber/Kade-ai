@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { Bot, ChevronDown, ChevronUp } from 'lucide-react'
+import { Bot } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import CodeBlock from './CodeBlock.jsx'
@@ -8,7 +7,6 @@ import LoadingDots from '../common/LoadingDots.jsx'
 import MessageActions from './MessageActions.jsx'
 
 export default function MessageBubble({ message, index, isStreaming = false }) {
-  const [thinkingExpanded, setThinkingExpanded] = useState(false)
   const isUser = message.role === 'user'
 
   return (
@@ -33,24 +31,7 @@ export default function MessageBubble({ message, index, isStreaming = false }) {
           >
             {!isUser && message.thinkingSteps && message.thinkingSteps.length > 0 && (
               <div className="mb-2">
-                <button
-                  onClick={() => setThinkingExpanded(prev => !prev)}
-                  className="flex items-center gap-1.5 text-xs text-[#6B7280] hover:text-[#0D9488] dark:text-brand-400 dark:hover:text-brand-300 transition-colors duration-150 cursor-pointer"
-                >
-                  {thinkingExpanded ? (
-                    <ChevronUp className="w-3.5 h-3.5" />
-                  ) : (
-                    <ChevronDown className="w-3.5 h-3.5" />
-                  )}
-                  <span className="font-medium">
-                    {message.thinkingSteps.length} thinking steps
-                  </span>
-                </button>
-                {thinkingExpanded && (
-                  <div className="mt-2">
-                    <ThinkingPanel steps={message.thinkingSteps} isComplete />
-                  </div>
-                )}
+                <ThinkingPanel steps={message.thinkingSteps} isComplete />
               </div>
             )}
 
