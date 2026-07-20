@@ -228,45 +228,7 @@
     animation: slideUp 0.3s ease-out;
   }
 
-  .thinking-gradient {
-    background: linear-gradient(
-      135deg,
-      rgba(13, 148, 136, 0.06) 0%,
-      rgba(13, 148, 136, 0.02) 100%
-    );
-  }
 
-  .dark .thinking-gradient {
-    background: linear-gradient(
-      135deg,
-      rgba(118, 171, 174, 0.1) 0%,
-      rgba(118, 171, 174, 0.04) 100%
-    );
-  }
-
-  @keyframes stepPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.18); }
-    50% { box-shadow: 0 0 0 5px rgba(13, 148, 136, 0.04); }
-  }
-
-  .step-icon-pulse {
-    animation: stepPulse 2s ease-in-out infinite;
-  }
-
-  @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(200%); }
-  }
-
-  .thinking-shimmer {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.3) 50%,
-      transparent 100%
-    );
-    animation: shimmer 1.5s ease-in-out infinite;
-  }
 
   /* Remove blue line highlighting in syntax highlighter */
   .message-content pre[class*="language-"],
